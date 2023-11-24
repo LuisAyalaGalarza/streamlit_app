@@ -1,36 +1,33 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import datetime
-st.set_page_config(layout="wide")
 import plotly.graph_objs as go
-#dataset
-link='https://www.datosabiertos.gob.pe/sites/default/files/tb_medida_estaciones%20%281%29_0.csv'
+
+st.markdown('## Datos Hidrometereológicos Gobierno Regional Piura')
 #Leo el dataset
-df = pd.read_csv(link)
+df = pd.read_csv('tb_medida_estaciones.csv')
 
 # Pre procesamiento
-
 df = df.drop('FECHA_CORTE', axis=1)
 df = df.drop('UBIGEO', axis=1)
 df = df.drop('DEPARTAMENTO', axis=1)
 df = df.rename(columns={'CUENTA': 'CUENCA'})
-
+df['PROVINCIA'] = df['PROVINCIA'].str.upper()
+df['DISTRITO'] = df['DISTRITO'].str.upper()
 
 #Filtro para que el usuario elija la "Estación" que quiere ver en el cuadro
 option_1 = st.selectbox(
-   "Elige una PROVINCIA",
+   "Elige una Provincia",
    (df['PROVINCIA'].unique()),
    index=None,
-   placeholder="Seleccione una PROVINCIA",
+   placeholder="Seleccione una Provincia",
 )
 
 #Filtro para que el usuario elija la "Estación" que quiere ver en el cuadro
 option_2 = st.selectbox(
-   "Elige una DISTRITO",
+   "Elige una Distrito",
    (df[df['PROVINCIA'] == option_1]['DISTRITO'].unique()),
    index=None,
-   placeholder="Seleccione un DISTRITO",
+   placeholder="Seleccione un Distrito",
 )
 
 
@@ -76,9 +73,6 @@ df = df[(df['D_FECHA_MUESTRA'] >= d1) &
         (df['PROVINCIA'] == option_1) & 
          (df['DISTRITO'] == option_2)][selected_columns]
 
-
-
-# option = st.sidebar.selectbox("Estación", df['DISTRITO'].unique(), )
 
 #muestro dataset
 df
